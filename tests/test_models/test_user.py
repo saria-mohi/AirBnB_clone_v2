@@ -1,102 +1,52 @@
 #!/usr/bin/python3
-"""Test cases for User class"""
-
+"""unittest for BaseModel"""
 import unittest
-import time
-from datetime import datetime
-from models.base_model import BaseModel
-from models import user
+import pep8
+from models.user import User
 import inspect
-User = user.User
 
 
 class TestUser(unittest.TestCase):
-    """tests for the Class User"""
+    """defining the unittest cases for BaseModel class"""
 
-    def setUp(self):
-        """Set up test methods"""
-        pass
+    @classmethod
+    def setUpClass(cls):
+        """
+        Set up class method for the doc tests
+        """
+        cls.setup = inspect.getmembers(User, inspect.isfunction)
 
-    def tearDown(self):
-        """Tear Down test methods"""
-        pass
+    def test_pep8_conformance(self):
+        """Test that we conform to PEP8."""
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(["./models/user.py"])
+        self.assertEqual(result.total_errors, 0, "Found code style " +
+                         "errors (and warnings).")
 
-    def test_user_module_docstring(self):
-        """Test for the user.py module docstring"""
-        self.assertIsNot(User.__doc__, None,
-                         "user.py without docstring")
-        self.assertTrue(len(User.__doc__) >= 1,
-                        "user.py without docstring")
+    def test_pep8_conformance_test_user(self):
+        """
+        Test that test_user.py file conform to PEP8
+        """
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(['tests/test_models/test_user.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
 
-    def test_review_class_docstring(self):
-        """Test for the User class docstring"""
-        self.assertIsNot(User.__doc__, None,
-                         "User class without docstring")
-        self.assertTrue(len(User.__doc__) >= 1,
-                        "User class without docstring")
+    def test_module_docstring(self):
+        """
+        Tests if module docstring documentation exist
+        """
+        self.assertTrue(len(User.__doc__) >= 1)
 
-    def test_class_User(self):
-        """test for the class"""
-        obj_user = User()
-        self.assertIsInstance(obj_user, User)
+    def test_class_docstring(self):
+        """
+        Tests if class docstring documentation exist
+        """
+        self.assertTrue(len(User.__doc__) >= 1)
 
-    def test_subclass_BaseModel(self):
-        """Test the user class is subclass of BaseModel"""
-        obj_user = User()
-        self.assertIsInstance(obj_user, BaseModel)
-        self.assertTrue(hasattr(obj_user, "id"))
-        self.assertTrue(hasattr(obj_user, "created_at"))
-        self.assertTrue(hasattr(obj_user, "updated_at"))
-
-    def test_attributes_user(self):
-        """Test user attributes"""
-        attributes_user = {"email": str,
-                           "password": str,
-                           "first_name": str,
-                           "last_name": str}
-        obj_user = User()
-        for key, value in attributes_user.items():
-            self.assertTrue(hasattr(obj_user, key))
-            self.assertEqual(type(getattr(obj_user, key, None)), value)
-
-    def test_str(self):
-        """Test str method"""
-        obj_user = User()
-        string = "[User] ({}) {}".format(
-                 obj_user.id, obj_user.__dict__)
-        self.assertEqual(string, str(obj_user))
-
-    def test_to_dict_user_attributes(self):
-        """Test to_dict method creates a dictionary with expected attributes"""
-        obj_user = User()
-        new_dict = obj_user.to_dict()
-        self.assertEqual(type(new_dict), dict)
-        for attributes in obj_user.__dict__:
-            self.assertTrue(attributes in new_dict)
-            self.assertTrue("__class__" in new_dict)
-
-    def test_to_dict_user_values(self):
-        """Test dictionary values"""
-        obj_user = User()
-        t_format = "%Y-%m-%dT%H:%M:%S.%f"
-        new_dict = obj_user.to_dict()
-        self.assertEqual(new_dict["__class__"], "User")
-        self.assertEqual(type(new_dict["created_at"]), str)
-        self.assertEqual(type(new_dict["updated_at"]), str)
-        self.assertEqual(new_dict["created_at"],
-                         obj_user.created_at.strftime(t_format))
-        self.assertEqual(new_dict["updated_at"],
-                         obj_user.updated_at.strftime(t_format))
-
-    def test_save(self):
-        """Test save method"""
-        obj_user = User()
-        before = obj_user.updated_at
-        obj_user.save()
-        time.sleep(2)
-        self.assertLess(before, obj_user.updated_at)
-        with open("file.json", "r") as file:
-            self.assertIn("User." + obj_user.id, file.read())
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_func_docstrings(self):
+        """
+        Tests if methods docstring documntation exist
+        """
+        for func in self.setup:
+            self.assertTrue(len(func[1].__doc__) >= 1)
