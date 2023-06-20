@@ -1,92 +1,110 @@
 #!/usr/bin/python3
-""" """
-from tests.test_models.test_base_model import test_basemodel
-from models.place import Place
+"""Test cases for Place class"""
+
+import unittest
+import time
 import os
+from datetime import datetime
+from models.base_model import BaseModel
+from models.engine.file_storage import FileStorage
+from models import place
+import inspect
+Place = place.Place
 
 
-class test_Place(test_basemodel):
-    """ place tests class"""
+class TestPlace(unittest.TestCase):
+    """tests for the Class Place"""
 
-    def __init__(self, *args, **kwargs):
-        """ init test class"""
-        super().__init__(*args, **kwargs)
-        self.name = "Place"
-        self.value = Place
+    def setUp(self):
+        """Set up test methods"""
+        pass
 
-    def test_city_id(self):
-        """ testing place city_id attr"""
-        new = self.value()
-        self.assertEqual(type(new.city_id), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def tearDown(self):
+        """Tear Down test methods"""
+        pass
 
-    def test_user_id(self):
-        """ testing place user_id attr"""
-        new = self.value()
-        self.assertEqual(type(new.user_id), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_place_module_docstring(self):
+        """Test for the place.py module docstring"""
+        self.assertIsNot(place.__doc__, None,
+                         "place.py without docstring")
+        self.assertTrue(len(place.__doc__) >= 1,
+                        "place.py without docstring")
 
-    def test_name(self):
-        """ testing place name attr"""
-        new = self.value()
-        self.assertEqual(type(new.name), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_place_class_docstring(self):
+        """Test for the Place class docstring"""
+        self.assertIsNot(Place.__doc__, None, "Place class without docstring")
+        self.assertTrue(len(Place.__doc__) >= 1,
+                        "Place class without docstring")
 
-    def test_description(self):
-        """testing place description attr"""
-        new = self.value()
-        self.assertEqual(type(new.description), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_class_Place(self):
+        """test for the class"""
+        obj_place = Place()
+        self.assertIsInstance(obj_place, Place)
 
-    def test_number_rooms(self):
-        """ testing place number of rooms attr"""
-        new = self.value()
-        self.assertEqual(type(new.number_rooms), int if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_subclass_BaseModel(self):
+        """Test the place class is subclass of BaseModel"""
+        obj_place = Place()
+        self.assertIsInstance(obj_place, BaseModel)
+        self.assertTrue(hasattr(obj_place, "id"))
+        self.assertTrue(hasattr(obj_place, "created_at"))
+        self.assertTrue(hasattr(obj_place, "updated_at"))
 
-    def test_number_bathrooms(self):
-        """ testing place number of bathrooms attr"""
-        new = self.value()
-        self.assertEqual(type(new.number_bathrooms), int if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_attributes_place(self):
+        """Test place attributes"""
+        attributes_place = {"city_id": str,
+                            "user_id": str,
+                            "name": str,
+                            "description": str,
+                            "number_rooms": int,
+                            "number_bathrooms": int,
+                            "max_guest": int,
+                            "price_by_night": int,
+                            "latitude": float,
+                            "longitude": float,
+                            "amenity_ids": list}
+        obj_place = Place()
+        for key, value in attributes_place.items():
+            self.assertTrue(hasattr(obj_place, key))
+            self.assertEqual(type(getattr(obj_place, key, None)), value)
 
-    def test_max_guest(self):
-        """ testing place max_guest attr"""
-        new = self.value()
-        self.assertEqual(type(new.max_guest), int if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_str(self):
+        """Test str method"""
+        obj_place = Place()
+        string = "[Place] ({}) {}".format(
+                 obj_place.id, obj_place.__dict__)
+        self.assertEqual(string, str(obj_place))
 
-    def test_price_by_night(self):
-        """ testing place price by night attr"""
-        new = self.value()
-        self.assertEqual(type(new.price_by_night), int if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_to_dict_place_attributes(self):
+        """Test to_dict method creates a dictionary with expected attributes"""
+        obj_place = Place()
+        new_dict = obj_place.to_dict()
+        self.assertEqual(type(new_dict), dict)
+        for attributes in obj_place.__dict__:
+            self.assertTrue(attributes in new_dict)
+            self.assertTrue("__class__" in new_dict)
 
-    def test_latitude(self):
-        """ testing place latitud attr"""
-        new = self.value()
-        self.assertEqual(type(new.latitude), float if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_to_dict_place_values(self):
+        """Test dictionary values"""
+        obj_place = Place()
+        t_format = "%Y-%m-%dT%H:%M:%S.%f"
+        new_dict = obj_place.to_dict()
+        self.assertEqual(new_dict["__class__"], "Place")
+        self.assertEqual(type(new_dict["created_at"]), str)
+        self.assertEqual(type(new_dict["updated_at"]), str)
+        self.assertEqual(new_dict["created_at"],
+                         obj_place.created_at.strftime(t_format))
+        self.assertEqual(new_dict["updated_at"],
+                         obj_place.updated_at.strftime(t_format))
 
-    def test_longitude(self):
-        """ testing place longitude attr"""
-        new = self.value()
-        self.assertEqual(type(new.latitude), float if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    def test_save(self):
+        """Test save method"""
+        obj_place = Place()
+        before = obj_place.updated_at
+        time.sleep(2)
+        obj_place.save()
+        self.assertLess(before, obj_place.updated_at)
+        with open("file.json", "r") as file:
+            self.assertIn("Place." + obj_place.id, file.read())
 
-    def test_amenity_ids(self):
-        """ testing amenity ids"""
-        new = self.value()
-        self.assertEqual(type(new.amenity_ids), list if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+if __name__ == "__main__":
+    unittest.main()
