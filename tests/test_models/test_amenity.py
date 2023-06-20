@@ -1,35 +1,22 @@
 #!/usr/bin/python3
-import unittest
-from datetime import datetime
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.__init__ import storage
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
-from console import HBNBCommand
+import os
 
 
-class Test_AmenityModel(unittest.TestCase):
-    """
-    Test the amenity model class
-    """
+class test_Amenity(test_basemodel):
+    """ amenity test class"""
 
-    def setUp(self):
-        self.cli = HBNBCommand()
-        self.model = Amenity(**{"name": "amenities"})
-        self.model.save()
+    def __init__(self, *args, **kwargs):
+        """inti the test class """
+        super().__init__(*args, **kwargs)
+        self.name = "Amenity"
+        self.value = Amenity
 
-    def tearDown(self):
-        self.model.delete()
-        self.cli.do_destroy("Amenity " + self.model.id)
-
-    def test_var_initialization(self):
-        self.assertTrue(hasattr(self.model, "name"))
-        self.assertEqual(self.model.name, "amenities")
-
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_name2(self):
+        """testing name type """
+        new = self.value()
+        self.assertEqual(type(new.name), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))

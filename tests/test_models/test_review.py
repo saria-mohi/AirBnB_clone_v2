@@ -1,38 +1,36 @@
 #!/usr/bin/python3
-import unittest
-from datetime import datetime
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.__init__ import storage
-from models.place import Place
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.review import Review
-from models.state import State
-from models.user import User
-from console import HBNBCommand
+import os
 
 
-class Test_ReviewModel(unittest.TestCase):
-    """
-    Test the review model class
-    """
+class test_review(test_basemodel):
+    """ review test class"""
 
-    def setUp(self):
-        self.cli = HBNBCommand()
-        self.model = Review()
-        self.model.save()
+    def __init__(self, *args, **kwargs):
+        """ review class init"""
+        super().__init__(*args, **kwargs)
+        self.name = "Review"
+        self.value = Review
 
-    def tearDown(self):
-        self.cli.do_destroy("Review " + self.model.id)
+    def test_place_id(self):
+        """ testing review place_id attr"""
+        new = self.value()
+        self.assertEqual(type(new.place_id), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-    def test_var_initialization(self):
-        self.assertTrue(hasattr(self.model, "place_id"))
-        self.assertTrue(hasattr(self.model, "user_id"))
-        self.assertTrue(hasattr(self.model, "text"))
-        self.assertEqual(self.model.place_id, "")
-        self.assertEqual(self.model.user_id, "")
-        self.assertEqual(self.model.text, "")
+    def test_user_id(self):
+        """ testing review user_id attr"""
+        new = self.value()
+        self.assertEqual(type(new.user_id), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-
-if __name__ == "__main__":
-    unittest.main()
+    def test_text(self):
+        """ testing review text attr"""
+        new = self.value()
+        self.assertEqual(type(new.text), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))

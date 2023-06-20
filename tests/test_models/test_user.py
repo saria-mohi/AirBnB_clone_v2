@@ -1,40 +1,43 @@
 #!/usr/bin/python3
-import unittest
-from datetime import datetime
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.__init__ import storage
-from models.place import Place
-from models.review import Review
-from models.state import State
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.user import User
-from console import HBNBCommand
+import os
 
 
-class Test_UserModel(unittest.TestCase):
-    """
-    Test the user model class
-    """
+class test_User(test_basemodel):
+    """ test class for user model"""
 
-    def setUp(self):
-        self.cli = HBNBCommand()
-        self.model = User()
-        self.model.save()
+    def __init__(self, *args, **kwargs):
+        """ user test class init"""
+        super().__init__(*args, **kwargs)
+        self.name = "User"
+        self.value = User
 
-    def tearDown(self):
-        self.cli.do_destroy("User " + self.model.id)
+    def test_first_name(self):
+        """ testing user first anme attr"""
+        new = self.value()
+        self.assertEqual(type(new.first_name), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-    def test_var_initialization(self):
-        self.assertTrue(hasattr(self.model, "email"))
-        self.assertTrue(hasattr(self.model, "password"))
-        self.assertTrue(hasattr(self.model, "first_name"))
-        self.assertTrue(hasattr(self.model, "last_name"))
-        self.assertEqual(self.model.email, "")
-        self.assertEqual(self.model.password, "")
-        self.assertEqual(self.model.first_name, "")
-        self.assertEqual(self.model.last_name, "")
+    def test_last_name(self):
+        """ testing user last name attr"""
+        new = self.value()
+        self.assertEqual(type(new.last_name), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
+    def test_email(self):
+        """ testing user email attr"""
+        new = self.value()
+        self.assertEqual(type(new.email), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_password(self):
+        """ testing user password attr"""
+        new = self.value()
+        self.assertEqual(type(new.password), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
