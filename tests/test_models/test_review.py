@@ -1,61 +1,36 @@
 #!/usr/bin/python3
-"""unittest for BaseModel"""
-import unittest
-import pep8
+""" """
+from tests.test_models.test_base_model import test_basemodel
 from models.review import Review
-import inspect
+import os
 
 
-class TestReview(unittest.TestCase):
-    """defining the unittest cases for BaseModel class"""
+class test_review(test_basemodel):
+    """ review test class"""
 
-    @classmethod
-    def setUpClass(cls):
-        """
-        Set up class method for the doc tests
-        """
-        cls.setup = inspect.getmembers(Review, inspect.isfunction)
+    def __init__(self, *args, **kwargs):
+        """ review class init"""
+        super().__init__(*args, **kwargs)
+        self.name = "Review"
+        self.value = Review
 
-    def test_pep8_conformance(self):
-        """Test that we conform to PEP8."""
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(["./models/review.py"])
-        self.assertEqual(result.total_errors, 0, "Found code style " +
-                         "errors (and warnings).")
+    def test_place_id(self):
+        """ testing review place_id attr"""
+        new = self.value()
+        self.assertEqual(type(new.place_id), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-    def test_pep8_conformance_Review(self):
-        """
-        Test that review.py file conform to PEP8
-        """
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/review.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def test_user_id(self):
+        """ testing review user_id attr"""
+        new = self.value()
+        self.assertEqual(type(new.user_id), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))
 
-    def test_pep8_conformance_test_Review(self):
-        """
-        Test that test_review.py file conform to PEP8
-        """
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['tests/test_models/test_review.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
-
-    def test_module_docstring(self):
-        """
-        Tests if module docstring documentation exist
-        """
-        self.assertTrue(len(Review.__doc__) >= 1)
-
-    def test_class_docstring(self):
-        """
-        Tests if class docstring documentation exist
-        """
-        self.assertTrue(len(Review.__doc__) >= 1)
-
-    def test_func_docstrings(self):
-        """
-        Tests if methods docstring documntation exist
-        """
-        for func in self.setup:
-            self.assertTrue(len(func[1].__doc__) >= 1)
+    def test_text(self):
+        """ testing review text attr"""
+        new = self.value()
+        self.assertEqual(type(new.text), str if
+                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
+                         type(None))

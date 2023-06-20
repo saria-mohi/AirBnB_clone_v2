@@ -1,107 +1,173 @@
 #!/usr/bin/python3
-"""Module to define the BaseModel Class"""
-import uuid
-import datetime as dt
-import models
+""" """
+from models.base_model import BaseModel, Base
+from datetime import datetime
+import unittest
+from uuid import UUID
+import json
+import os
 
-
-class BaseModel:
-    """class that defines all common attributes/methods for other classes"""
+@unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
+                 'basemodel test not supported')
+class test_basemodel(unittest.TestCase):
+    """ test class for base_model class"""
 
     def __init__(self, *args, **kwargs):
-        """Base class constructor method
+        """ init the test class of basemodel"""
+        super().__init__(*args, **kwargs)
+        self.name = 'BaseModel'
+        self.value = BaseModel
 
-        Args:
-            args: Received Tuple with parameters to initialize a new object
-            kwargs: Recceived Dictionary with parameters to init a new object.
+    def setUp(self):
+        """ the set up method of the test class"""
+        pass
+
+    def tearDown(self):
+        """the teardown method of the ctest class"""
+        try:
+            os.remove('file.json')
+        except Exception:
+            pass
+
+    def test_init(self):
+        """Tests the initialization of the model class.
         """
-        if kwargs is not None and len(kwargs) > 0:
-            for key, v in kwargs.items():
-                if key in ["created_at", "updated_at"]:
-                    setattr(self, key, dt.datetime.strptime(v,
-                            '%Y-%m-%dT%H:%M:%S.%f'))
-                elif key == "id":
-                    self.id = v
+        self.assertIsInstance(self.value(), BaseModel)
+        if self.value is not BaseModel:
+            self.assertIsInstance(self.value(), Base)
         else:
-            self.id = str(uuid.uuid4())
-            self.created_at = dt.datetime.now()
-            self.updated_at = dt.datetime.now()
-            models.storage.new(self)
+            self.assertNotIsInstance(self.value(), Base)
 
-    def save(self):
-        """updates the public instance attribute updated_at with
-        the current datetime.
-        """
-        self.updated_at = dt.datetime.now()
-        models.storage.new(self)
-        models.storage.save()
+    def test_default(self):
+        """ default testing of basemodel"""
+        i = self.value()
+        self.assertEqual(type(i), self.value)
 
-    def to_dict(self):
-        """returns a dictionary containing all keys/values of __dict__
-        of the instance.
-        """
-        myDict = self.__dict__.copy()
-        myDict["__class__"] = self.__class__.__name__
-        myDict["created_at"] = self.created_at.isoformat()
-        myDict["updated_at"] = self.updated_at.isoformat()
-        return myDict
+    def test_kwargs(self):
+        """ testing basemodel with kwargs"""
+        i = self.value()
+        copy = i.to_dict()
+        new = BaseModel(**copy)
+        self.assertFalse(new is i)
 
-    def __str__(self):
-        """string representation of the created class.
+    def test_kwargs_int(self):
+        """ testing with kwargs again but with int kwargs"""
+        i = self.value()
+        copy = i.to_dict()
+        copy.update({1: 2})
+        with self.assertRaises(TypeError):
+            new = BaseModel(**copy)
 
-        Return:
-            format: [<class name>] (<self.id>) <self.__dict__>
-        """
-        string = "[{}] ({}) {}".format(
-            self.__class__.__name__,
-            self.id,
-            self.__dict__)
-        return string
+    def test_save(self):
+        """ Testing save metthod"""
+        i = self.value()
+        i.save()
+        key = self.name + "." + i.id
+        with open('file.json', 'r') as f:
+            j = json.load(f)
+            self.assertEqual(j[key], i.to_dict())
 
-    def all(class_name):
-        """Update your command interpreter
-        (console.py) to retrieve all instances of
-        a class by using: <class name>.all()
-        """
-        dir_obj = models.storage.all()
-        my_list = []
-        for obj_id in dir_obj.keys():
-            if dir_obj[obj_id].__class__.__name__ == class_name:
-                my_list.append(str(dir_obj[obj_id]))
-        return my_list
+    def test_str(self):
+        """ testing the str method of themodel"""
+        i = self.value()
+        self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
+                         i.__dict__))
 
-    def count(class_name):
-        """Update your command interpreter
-        (console.py) to retrieve the number of
-        instances of a class: <class name>.count()."""
-        dir_obj = models.storage.all()
-        n_elem = 0
-        for obj_id in dir_obj.keys():
-            if dir_obj[obj_id].__class__.__name__ == class_name:
-                n_elem += 1
-        return n_elem
+    def test_todict(self):
+        """ testing the to_dict method"""
+        i = self.value()
+        n = i.to_dict()
+        self.assertEqual(i.to_dict(), n)
+        # Tests if it's a dictionary
+        self.assertIsInstance(self.value().to_dict(), dict)
+        # Tests if to_dict contains accurate keys
+        self.assertIn('id', self.value().to_dict())
+        self.assertIn('created_at', self.value().to_dict())
+        self.assertIn('updated_at', self.value().to_dict())
+        # Tests if to_dict contains added attributes
+        mdl = self.value()
+        mdl.firstname = 'Celestine'
+        mdl.lastname = 'Akpanoko'
+        self.assertIn('firstname', mdl.to_dict())
+        self.assertIn('lastname', mdl.to_dict())
+        self.assertIn('firstname', self.value(firstname='Celestine').to_dict())
+        self.assertIn('lastname', self.value(lastname='Akpanoko').to_dict())
+        # Tests to_dict datetime attributes if they are strings
+        self.assertIsInstance(self.value().to_dict()['created_at'], str)
+        self.assertIsInstance(self.value().to_dict()['updated_at'], str)
+        # Tests to_dict output
+        datetime_now = datetime.today()
+        mdl = self.value()
+        mdl.id = '012345'
+        mdl.created_at = mdl.updated_at = datetime_now
+        to_dict = {
+            'id': '012345',
+            '__class__': mdl.__class__.__name__,
+            'created_at': datetime_now.isoformat(),
+            'updated_at': datetime_now.isoformat()
+        }
+        self.assertDictEqual(mdl.to_dict(), to_dict)
+        if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+            self.assertDictEqual(
+                self.value(id='u-b34', age=13).to_dict(),
+                {
+                    '__class__': mdl.__class__.__name__,
+                    'id': 'u-b34',
+                    'age': 13
+                }
+            )
+            self.assertDictEqual(
+                self.value(id='u-b34', age=None).to_dict(),
+                {
+                    '__class__': mdl.__class__.__name__,
+                    'id': 'u-b34',
+                    'age': None
+                }
+            )
+        # Tests to_dict output contradiction
+        mdl_d = self.value()
+        self.assertIn('__class__', self.value().to_dict())
+        self.assertNotIn('__class__', self.value().__dict__)
+        self.assertNotEqual(mdl_d.to_dict(), mdl_d.__dict__)
+        self.assertNotEqual(
+            mdl_d.to_dict()['__class__'],
+            mdl_d.__class__
+        )
+        # Tests to_dict with arg
+        with self.assertRaises(TypeError):
+            self.value().to_dict(None)
+        with self.assertRaises(TypeError):
+            self.value().to_dict(self.value())
+        with self.assertRaises(TypeError):
+            self.value().to_dict(45)
+        self.assertNotIn('_sa_instance_state', n)
 
-    def show(class_name):
-        """Update your command interpreter
-        (console.py) to retrieve the number of
-        instances of a class: <class name>.count()."""
-        dir_obj = models.storage.all()
-        args = class_name.split(',')
-        for obj_id in dir_obj.keys():
-            if dir_obj[obj_id].__class__.__name__ == args[0]\
-               and dir_obj[obj_id].id == args[1]:
-                return dir_obj[obj_id]
-        return
+    def test_kwargs_none(self):
+        """ testing kwargs again with none"""
+        n = {None: None}
+        with self.assertRaises(TypeError):
+            new = self.value(**n)
 
-    def destroy(class_name):
-        """Update your command interpreter
-        (console.py) to retrieve the number of
-        instances of a class: <class name>.count()."""
-        dir_obj = models.storage.all()
-        args = class_name.split(',')
-        key = "{}.{}".format(args[0], args[1])
-        if key not in dir_obj.keys():
-            print("** no instance found **")
-        else:
-            models.storage.delete(key)
-        return
+    def test_kwargs_one(self):
+        """ testing kwargs with one arg"""
+        n = {'name': 'test'}
+        new = self.value(**n)
+        self.assertEqual(new.name, n['name'])
+
+    def test_id(self):
+        """ testing id attr of the model"""
+        new = self.value()
+        self.assertEqual(type(new.id), str)
+
+    def test_created_at(self):
+        """ testing created at attr"""
+        new = self.value()
+        self.assertEqual(type(new.created_at), datetime)
+
+    def test_updated_at(self):
+        """ testing updated at attr"""
+        new = self.value()
+        self.assertEqual(type(new.updated_at), datetime)
+        n = new.to_dict()
+        new = BaseModel(**n)
+        self.assertFalse(new.created_at == new.updated_at)
