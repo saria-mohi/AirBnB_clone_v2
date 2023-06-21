@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """test for file storage"""
 import unittest
-import pep8
 import json
 import os
 from os import getenv
