@@ -74,7 +74,20 @@ class TestConsole(unittest.TestCase):
 
     def test_create(self):
         """Test create command inpout"""
-        pass
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd("create")
+            self.assertEqual(
+                "** class name missing **\n", f.getvalue())
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd("create asdfsfsd")
+            self.assertEqual(
+                "** class doesn't exist **\n", f.getvalue())
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd('create User email="hoal@.com" password="1234"')
+        with patch('sys.stdout', new=StringIO()) as f:
+            self.consol.onecmd("all User")
+            # self.assertEqual(
+            #     "[[User]", f.getvalue()[:7])
 
     def test_show(self):
         """Test show command inpout"""
@@ -212,12 +225,13 @@ class TestConsole(unittest.TestCase):
         my_id = obj[obj.find('(')+1:obj.find(')')]
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("User.update(" + my_id + ")")
-            # self.assertEqual(
-            #    "** attribute name missing **\n", f.getvalue())
+            self.assertEqual(
+                "** attribute name missing **\n", f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
             self.consol.onecmd("User.update(" + my_id + ", name)")
-            # self.assertEqual(
-            #    "** value missing **\n", f.getvalue())
+            self.assertEqual(
+                "** value missing **\n", f.getvalue())
+
 
 if __name__ == "__main__":
     unittest.main()
