@@ -1,4 +1,3 @@
-										AirBNB V #1
 AIRBNB TEAM PROJECT
 # INTRODUCTION:
 The goal of the project is to deploy on the server a simple copy of the AirBnB website
@@ -88,39 +87,5 @@ Second: create modules Base Modle,User, Review, Place, State, City and Amenity
   
 
 
-											AirBNB V #2
-# Tasks:
 
-   ## Task0. Fork me if you can!
-   - update the repository name to AirBnB_clone_v2.
-
-   ## Task1. Bug free!
-    - This codebase contains many test cases. Some are missing, but the ones included cover the basic functionality of the program.
-
-   ## Task2. Console improvements
-    - Update the def do_create(self, arg): function of your command interpreter (console.py) to allow for object creation with given parameters.
-
-   ## Task3. MySQL setup development
-    - Write a script that prepares a MySQL server for the project.
-
-   ## Task4. MySQL setup test
-    - Write a script that prepares a MySQL server for the project.
-
-   ## Task5. Delete object
-    - Update FileStorage: (models/engine/file_storage.py).
-
-   ## Task6. DBStorage - States and Cities
-    - SQLAlchemy will be your best friend!.
-
-   ## Task7. DBStorage - User
-    - Update User: (models/user.py).
-
-   ## Task8. DBStorage - Place
-    - Update Place: (models/place.py).
-
-   ## Task9.  DBStorage - Review
-    - Update Review: (models/review.py).
-
-   ## Task10. DBStorage - Amenity... and BOOM!
-    - Update Amenity: (models/amenity.py).
 
