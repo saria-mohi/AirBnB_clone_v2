@@ -1,8 +1,11 @@
 #!/usr/bin/python3
-# Fabfile to generates a .tgz archive from the contents of web_static.
-import os.path
-from datetime import datetime
+'''module:
+create tarball artifact of static files in local
+'''
+
 from fabric.api import local
+from datetime import datetime
+import os.path
 
 
 def do_pack():
