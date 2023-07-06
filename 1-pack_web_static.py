@@ -1,3 +1,8 @@
+#!/usr/bin/python3
+'''module:
+create tarball artifact of static files in local
+'''
+
 from fabric.api import local
 from datetime import datetime
 import os.path
