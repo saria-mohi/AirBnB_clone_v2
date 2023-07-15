@@ -1,36 +1,38 @@
 #!/usr/bin/python3
-# Fabfile to distribute an archive to a web server.
-import os.path
-from fabric.api import env, put, run
+"""
+Fabric script to generate a .tgz archive from the contents of the web_static
+and move it to the servers
+"""
 
-env.hosts = ["100.26.233.288", "34.229.67.124"]
-env.user = "ubuntu"
+from fabric.api import put, env, sudo
+from os.path import exists
+
+env.hosts = ['100.26.233.228', '34.229.67.124']
+# env.hosts = ['54.160.90.38', '100.25.36.19']
+env.user = 'ubuntu'
+
 
 def do_deploy(archive_path):
-    """Distributes an archive to a web server.
-
-    Args:
-        archive_path (str): The path of the archive to distribute.
-    Returns:
-        If the file doesn't exist at archive_path or an error occurs - False.
-        Otherwise - True.
-    """
-    if os.path.isfile(archive_path) is False:
+    """Deploys the web static to the server"""
+    if not exists(archive_path):
         return False
-    
 
     try:
-        file = archive_path.split("/")[-1]
-        name = file.split(".")[0]
-        archive_path = "/data/web_static/releases/{}/".format(name)
-        link = "/data/web_static/current"
+        archive_name = archive_path.split("/")[-1]
+        folder_name = archive_name.split(".")[0]
+        releaseVersion = "/data/web_static/releases/{}/".format(folder_name)
+        symLink = "/data/web_static/current"
 
-        put(archive_path, "/tmp/{}".format(file))
-        run("mkdir -p {}/".format(archive_path))
-        run("tar -xzf /tmp/{} -C {}/".format(file, archive_path))
-        run("rm /tmp/{}".format(file))
-        run("rm -rf {}".format(link))
-        run("ln -s {} {}".format( archive_path,link))
+        print("Deploying new version from {}...".format(folder_name))
+        put(archive_path, "/tmp/{}".format(archive_name))
+        sudo("mkdir -p {}".format(releaseVersion))
+        sudo("tar -xzf /tmp/{} -C {} --strip-components=1".format(
+            archive_name, releaseVersion))
+        sudo("rm /tmp/{}".format(archive_name))
+        sudo("rm -f {}".format(symLink))
+        sudo("ln -s {} {}".format(releaseVersion, symLink))
+        print("New version deployed -> {}".format(releaseVersion))
         return True
     except Exception:
+        print("Failed to deploy new version")
         return False
