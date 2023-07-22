@@ -16,6 +16,7 @@ def show_message():
     # this is the method2 to dispaly message for user
     return("HBNB")
 
+
 @app.route("/c/<text>", strict_slashes=False)
 def show_C(text):
     # this is the method2 to dispaly message for user
