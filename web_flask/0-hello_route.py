@@ -7,6 +7,7 @@ app = Flask(__name__)
 # this rout by default called when run it
 @app.route("/",strict_slashes=False)
 def display():
+    # this is the method to dispaly message for user
     return("Hello HBNB!")
 
 if __name__ == "__main__":
