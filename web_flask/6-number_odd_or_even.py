@@ -41,6 +41,7 @@ def show_number_template(n):
     # Display int Number using Template
     return (render_template('5-number.html', number=n))
 
+
 @app.route("/number_odd_or_even/<int:n>", strict_slashes=False)
 def show_number_template_even_or_odd(n):
     # Display chech int Number is even or odd using Template
