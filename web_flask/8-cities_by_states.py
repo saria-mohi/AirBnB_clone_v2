@@ -11,14 +11,14 @@ app = Flask(__name__)
 @app.route('/states_list')
 def state_list():
     # Inserts all States
-    storall_state = storage.all("State").values()
+    storall_state = storage.all(State).values()
     return (render_template('7-states_list.html', states=storall_state))
 
 
 @app.route('/cities_by_states')
 def state_list():
     # Inserts all States
-    storall_state = storage.all("State").values()
+    storall_state = storage.all(State).values()
     return (render_template('8-cities_by_states.html', states=storall_state))
 
 
