@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" Second task on flask"""
+""" task on flask"""
 from flask import Flask
 app = Flask(__name__)
 
