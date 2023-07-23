@@ -2,7 +2,7 @@
 """ task on flask with model"""
 from flask import Flask, render_template
 from models import storage
-from models.state import State
+# from models.state import State
 
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ app = Flask(__name__)
 @app.route('/8-cities_by_states.py', strict_slashes=False)
 def state_list():
     # Inserts all States
-    storall_state = storage.all(State).values()
+    storall_state = storage.all("State").values()
     return (render_template('8-cities_by_states.html', states=storall_state))
 
 
