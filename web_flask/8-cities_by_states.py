@@ -7,7 +7,7 @@ from models import storage
 app = Flask(__name__)
 
 
-@app.route('/states_list')
+@app.route('/cities_by_states')
 def state_list():
     # Inserts all States
     storall_state = storage.all("State").values()
