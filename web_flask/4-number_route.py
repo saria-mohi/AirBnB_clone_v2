@@ -19,8 +19,21 @@ def show_message():
 
 @app.route("/c/<text>", strict_slashes=False)
 def show_C(text):
-    # Display C with text for user
+    # this is the method2 to dispaly message for user
     return("C {}".format(text.replace("_", " ")))
+
+
+@app.route("/python/", defaults={'text': 'is cool'}, strict_slashes=False)
+@app.route("/python/<text>", strict_slashes=False)
+def show_python(text):
+    # Display C with text for user
+    return("Python {}".format(text.replace("_", " ")))
+
+
+@app.route("/number/<int:n>", strict_slashes=False)
+def show_number(n):
+    # Display int Number with text for user
+    return("{} is a number" .format(n))
 
 
 if __name__ == "__main__":

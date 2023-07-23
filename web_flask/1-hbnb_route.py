@@ -13,7 +13,7 @@ def display():
 
 @app.route("/hbnb", strict_slashes=False)
 def show_message():
-    # this is the method2 to dispaly message for user
+    # Dispaly HBNB message for user
     return("HBNB")
 
 

@@ -13,7 +13,7 @@ def display():
 
 @app.route("/hbnb", strict_slashes=False)
 def show_message():
-    # this is the method2 to dispaly message for user
+    # Dispaly HBNB message for user
     return("HBNB")
 
 
@@ -26,7 +26,7 @@ def show_C(text):
 @app.route("/python/", defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
 def show_python(text):
-    # this is the method2 to dispaly message for user
+    # Display C with text for user
     return("Python {}".format(text.replace("_", " ")))
 
 
