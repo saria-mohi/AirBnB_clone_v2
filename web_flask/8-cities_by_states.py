@@ -8,7 +8,14 @@ from models.state import State
 app = Flask(__name__)
 
 
-@app.route('/8-cities_by_states.py', strict_slashes=False)
+@app.route('/states_list', strict_slashes=False)
+def state_list():
+    # Inserts all States
+    storall_state = storage.all(State).values()
+    return (render_template('7-states_list.html', states=storall_state))
+
+
+@app.route('/cities_by_states', strict_slashes=False)
 def state_list():
     # Inserts all States
     storall_state = storage.all(State).values()
