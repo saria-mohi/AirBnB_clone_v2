@@ -15,7 +15,7 @@ def state_list():
     return (render_template('7-states_list.html', states=storall_state))
 
 
-@app.route('/cities_by_states', strict_slashes=False)
+@app.route('/8-cities_by_states.py', strict_slashes=False)
 def state_list():
     # Inserts all States
     storall_state = storage.all(State).values()
@@ -23,7 +23,7 @@ def state_list():
 
 
 @app.teardown_appcontext
-def teardown(error):
+def teardown(exception):
     """
     Tearsdown the db connection
     """
